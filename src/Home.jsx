@@ -5,7 +5,8 @@ import MessageList from './components/MessageList';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import DateSelector from './components/DateSelector';
 import "./App.css"
-const socket = io('https://anon-backend-1.onrender.com');
+const url = import.meta.env.VITE_BACKEND_URL;
+const socket = io(url);
 
 function Home() {
   const [messages, setMessages] = useState([]);
@@ -20,7 +21,7 @@ function Home() {
   }, []);
   useEffect(() => {
     // 1. Fetch all messages initially
-    fetch('https://anon-backend-1.onrender.com/messages-public')
+    fetch(`${url}/messages-public`)
       .then(res => res.json())
       .then(data => setMessages(data));
 

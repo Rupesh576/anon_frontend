@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+const url = import.meta.env.VITE_BACKEND_URL;
 function MessageInput({ onSend }) {
   const [text, setText] = useState('');
 
