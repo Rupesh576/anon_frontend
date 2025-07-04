@@ -9,7 +9,7 @@ function MessageList({ messages, selectedDate }) {
 
     const newFiltered = messages
       .filter((msg) => {
-        const parsed = msg.timeStamp?.split("T")[0];
+        const parsed = new Date(msg.timeStamp).toLocaleDateString('en-CA');
         return parsed === selectedDate;
       })
       .sort((a, b) => new Date(a.timeStamp) - new Date(b.timeStamp));
