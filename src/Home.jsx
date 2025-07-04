@@ -21,7 +21,7 @@ function Home() {
   }, []);
   useEffect(() => {
     // 1. Fetch all messages initially
-    fetch(`${url}/messages-public`)
+    fetch(`${url}/api/messages-public`)
       .then(res => res.json())
       .then(data => setMessages(data));
 
