@@ -5,7 +5,7 @@ import MessageList from './components/MessageList';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import DateSelector from './components/DateSelector';
 import "./App.css"
-const socket = io('http://localhost:3000');
+const socket = io('https://anon-backend-1.onrender.com');
 
 function Home() {
   const [messages, setMessages] = useState([]);
@@ -20,7 +20,7 @@ function Home() {
   }, []);
   useEffect(() => {
     // 1. Fetch all messages initially
-    fetch('http://localhost:3000/api/messages-public')
+    fetch('https://anon-backend-1.onrender.com/messages-public')
       .then(res => res.json())
       .then(data => setMessages(data));
 

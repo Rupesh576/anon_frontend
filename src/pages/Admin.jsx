@@ -7,7 +7,7 @@ const accessMap = {
     "mod-key": "moderator",
     "add-key": "contributor",
 };
-
+const url='https://anon-backend-1.onrender.com';
 function Admin() {
     const navigate = useNavigate();
 
@@ -59,7 +59,7 @@ function Admin() {
     }, [secret]);
 
     const fetchWords = async () => {
-        const res = await axios.get("http://localhost:3000/api/badwords", {
+        const res = await axios.get(`${url}/api/badwords`, {
             headers: { "x-admin-secret": secret },
         });
         setBadwords(res.data);
@@ -67,7 +67,7 @@ function Admin() {
 
     const addWord = async () => {
         if (!newWord.trim()) return;
-        await axios.post("http://localhost:3000/api/badwords", { word: newWord }, {
+        await axios.post(`${url}/api/badwords`, { word: newWord }, {
             headers: { "x-admin-secret": secret },
         });
         setNewWord("");
@@ -75,35 +75,35 @@ function Admin() {
     };
 
     const deleteWord = async (word) => {
-        await axios.delete(`http://localhost:3000/api/badwords/${word}`, {
+        await axios.delete(`${url}/api/badwords/${word}`, {
             headers: { "x-admin-secret": secret },
         });
         fetchWords();
     };
 
     const fetchMessages = async () => {
-        const res = await axios.get("http://localhost:3000/api/messages", {
+        const res = await axios.get(`${url}/api/messages`, {
             headers: { "x-admin-secret": secret },
         });
         setMessages(res.data);
     };
 
     const deleteMessage = async (_id) => {
-        await axios.delete(`http://localhost:3000/api/messages/${_id}`, {
+        await axios.delete(`${url}/api/messages/${_id}`, {
             headers: { "x-admin-secret": secret },
         });
         fetchMessages();
     };
 
     const fetchBanned = async () => {
-        const res = await axios.get("http://localhost:3000/api/banned", {
+        const res = await axios.get(`${url}/api/banned`, {
             headers: { "x-admin-secret": secret },
         });
         setBanned(res.data);
     };
 
     const banUser = async (ip, fingerprint) => {
-        await axios.post("http://localhost:3000/api/ban", { ip, fingerprint }, {
+        await axios.post(`${url}/api/ban`, { ip, fingerprint }, {
             headers: { "x-admin-secret": secret },
         });
         alert("User banned.");
@@ -111,7 +111,7 @@ function Admin() {
     };
 
     const unbanUser = async (ip, fingerprint) => {
-        await axios.post("http://localhost:3000/api/unban", { ip, fingerprint }, {
+        await axios.post(`${url}/api/unban`, { ip, fingerprint }, {
             headers: { "x-admin-secret": secret },
         });
         alert("User unbanned.");
