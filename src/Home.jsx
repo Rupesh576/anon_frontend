@@ -4,12 +4,33 @@ import MessageInput from './components/MessageInput';
 import MessageList from './components/MessageList';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import DateSelector from './components/DateSelector';
-import "./App.css"
-const socket = io('https://anon-backend-1.onrender.com');
+import "./App.css";
+
+const url = import.meta.env.VITE_BACKEND_URL;
+const socket = io(url);
 
 function Home() {
   const [messages, setMessages] = useState([]);
   const [fingerprint, setFingerprint] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    return new Date().toLocaleDateString('en-CA'); // ✅ "YYYY-MM-DD" in user's local timezone
+  });
+
+  const [readOnlyMode, setReadOnlyMode] = useState(false);
+
+  // 🔒 Check if selected date is today
+  function isToday(dateStr) {
+    const selected = new Date(dateStr);
+    const now = new Date();
+    return selected.toDateString() === now.toDateString();
+  }
+
+
+  // 📅 React to date change
+  useEffect(() => {
+    setReadOnlyMode(!isToday(selectedDate));
+  }, [selectedDate]);
+
   useEffect(() => {
     const loadFingerprint = async () => {
       const fp = await FingerprintJS.load();
@@ -18,28 +39,24 @@ function Home() {
     };
     loadFingerprint();
   }, []);
+
   useEffect(() => {
-    // 1. Fetch all messages initially
-    fetch('https://anon-backend-1.onrender.com/messages-public')
+    fetch(`${url}/api/messages-public`)
       .then(res => res.json())
       .then(data => setMessages(data));
 
-    // 2. New message received from others
     socket.on('receive_message', (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
 
-    // 3. Message blocked by server (e.g. banned or bad word)
     socket.on('message_blocked', (info) => {
       alert(info);
     });
 
-    // 4. Message deleted by admin
     socket.on('message_deleted', (_id) => {
       setMessages(prev => prev.filter(msg => msg._id !== _id));
     });
 
-    // 5. Cleanup on unmount
     return () => {
       socket.off('receive_message');
       socket.off('message_blocked');
@@ -47,30 +64,24 @@ function Home() {
     };
   }, []);
 
-
   const handleSend = (text) => {
-    if (text.trim() && fingerprint) {
+    if (text.trim() && fingerprint && !readOnlyMode) {
       socket.emit('send_message', {
-        text,         // ✅ just one message string
+        text,
         fingerprint
       });
     }
   };
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0]; // Default = today (YYYY-MM-DD)
-  });
 
   return (
     <div className="container">
       <h2>💬 Anonymous Chat</h2>
-      
       <DateSelector
         selectedDate={selectedDate}
         onChange={(newDate) => setSelectedDate(newDate)}
       />
-      <MessageList messages={messages} selectedDate={selectedDate}/>
-      <MessageInput onSend={handleSend} />
+      <MessageList messages={messages} selectedDate={selectedDate} />
+      {isToday(selectedDate) && <MessageInput onSend={handleSend} />}
     </div>
   );
 }

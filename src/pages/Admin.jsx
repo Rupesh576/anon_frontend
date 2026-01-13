@@ -7,7 +7,7 @@ const accessMap = {
     "mod-key": "moderator",
     "add-key": "contributor",
 };
-const url='https://anon-backend-1.onrender.com';
+const url = import.meta.env.VITE_BACKEND_URL;
 function Admin() {
     const navigate = useNavigate();
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-
+const url = import.meta.env.VITE_BACKEND_URL;
 function MessageList({ messages, selectedDate }) {
   const [filtered, setFiltered] = useState([]);
   const messageEndRef = useRef(null);
@@ -9,7 +9,7 @@ function MessageList({ messages, selectedDate }) {
 
     const newFiltered = messages
       .filter((msg) => {
-        const parsed = msg.timeStamp?.split("T")[0];
+        const parsed = new Date(msg.timeStamp).toLocaleDateString('en-CA');
         return parsed === selectedDate;
       })
       .sort((a, b) => new Date(a.timeStamp) - new Date(b.timeStamp));
